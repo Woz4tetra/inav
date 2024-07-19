@@ -812,18 +812,18 @@ groups:
       - name: failsafe_fw_roll_angle
         description: "Amount of banking when `LAND` (or old `SET-THR`) failsafe is active on a fixed-wing machine. In 1/10 deg (deci-degrees). Negative values = left roll"
         default_value: -200
-        min: -800
-        max: 800
+        min: -3600
+        max: 3600
       - name: failsafe_fw_pitch_angle
         description: "Amount of dive/climb when `LAND` (or old `SET-THR`) failsafe is active on a fixed-wing machine. In 1/10 deg (deci-degrees). Negative values = climb"
         default_value: 100
-        min: -800
-        max: 800
+        min: -3600
+        max: 3600
       - name: failsafe_fw_yaw_rate
         description: "Requested yaw rate to execute when `LAND` (or old `SET-THR`) failsafe is active on a fixed-wing machine. In deg/s. Negative values = left turn"
         default_value: -45
-        min: -1000
-        max: 1000
+        min: -3600
+        max: 3600
       - name: failsafe_min_distance
         description: "If failsafe happens when craft is closer than this distance in centimeters from home, failsafe will not execute regular failsafe_procedure, but will execute procedure specified in failsafe_min_distance_procedure instead. 0 = Normal failsafe_procedure always taken."
         default_value: 0
