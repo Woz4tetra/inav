@@ -88,6 +88,7 @@ FASTRAM fpVector3_t imuMeasuredRotationBF;
 FASTRAM fpVector3_t compansatedGravityBF;// cm/s/s
 
 STATIC_FASTRAM float smallAngleCosZ;
+STATIC_FASTRAM float upsideDownAngleCosZ;
 
 STATIC_FASTRAM bool isAccelUpdatedAtLeastOnce;
 STATIC_FASTRAM fpVector3_t vCorrectedMagNorth;             // Magnetic North vector in EF (true North rotated by declination)
@@ -95,6 +96,7 @@ STATIC_FASTRAM fpVector3_t vCorrectedMagNorth;             // Magnetic North vec
 FASTRAM fpQuaternion_t orientation;
 FASTRAM attitudeEulerAngles_t attitude;             // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
 FASTRAM float rMat[3][3];
+FASTRAM bool isUpsideDown;
 
 STATIC_FASTRAM imuRuntimeConfig_t imuRuntimeConfig;
 
@@ -170,6 +172,7 @@ void imuConfigure(void)
 void imuInit(void)
 {
     smallAngleCosZ = cos_approx(degreesToRadians(imuRuntimeConfig.small_angle));
+    upsideDownAngleCosZ = cos_approx(degreesToRadians(90));
 
     for (int axis = 0; axis < XYZ_AXIS_COUNT; axis++) {
         imuMeasuredAccelBF.v[axis] = 0;
@@ -178,6 +181,7 @@ void imuInit(void)
     // Explicitly initialize FASTRAM statics
     isAccelUpdatedAtLeastOnce = false;
     gpsHeadingInitialized = false;
+    isUpsideDown = false;
 
     // Create magnetic declination matrix
 #ifdef USE_MAG
@@ -568,11 +572,13 @@ STATIC_UNIT_TESTED void imuUpdateEulerAngles(void)
         attitude.values.yaw += 3600;
 
     /* Update small angle state */
-    if (calculateCosTiltAngle() > smallAngleCosZ) {
+    float cosTiltZ = calculateCosTiltAngle();
+    if (cosTiltZ > smallAngleCosZ) {
         ENABLE_STATE(SMALL_ANGLE);
     } else {
         DISABLE_STATE(SMALL_ANGLE);
     }
+    isUpsideDown = cosTiltZ < upsideDownAngleCosZ;
 }
 
 static float imuCalculateAccelerometerWeightNearness(fpVector3_t* accBF)
@@ -877,6 +883,11 @@ bool isImuReady(void)
 bool isImuHeadingValid(void)
 {
     return (sensors(SENSOR_MAG) && STATE(COMPASS_CALIBRATED)) || gpsHeadingInitialized;
+}
+
+bool isImuUpsideDown(void)
+{
+    return isUpsideDown;
 }
 
 float calculateCosTiltAngle(void)

@@ -308,6 +308,10 @@ void servoMixer(float dT)
     input[INPUT_GVAR_5] = constrain(gvGet(5), -1000, 1000);
     input[INPUT_GVAR_6] = constrain(gvGet(6), -1000, 1000);
     input[INPUT_GVAR_7] = constrain(gvGet(7), -1000, 1000);
+
+    if (isImuUpsideDown()) {
+        input[INPUT_GVAR_0] *= -1;
+    }
 #endif
 
     if (IS_RC_MODE_ACTIVE(BOXCAMSTAB)) {

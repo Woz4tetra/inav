@@ -2848,6 +2848,17 @@ static void cliTimerOutputMode(char *cmdline)
 
 }
 
+static void cliDebug(char *cmdline)
+{
+    int index = fastA2I(cmdline);
+    switch (index)
+    {
+        case 0:
+            cliPrintf("Is upside down: %d ", isImuUpsideDown());
+            break;
+    }
+}
+
 static void printFeature(uint8_t dumpMask, const featureConfig_t *featureConfig, const featureConfig_t *featureConfigDefault)
 {
     uint32_t mask = featureConfig->enabledFeatures;
@@ -4363,6 +4374,7 @@ const clicmd_t cmdTable[] = {
     CLI_COMMAND_DEF("osd_layout", "get or set the layout of OSD items", "[<layout> [<item> [<col> <row> [<visible>]]]]", cliOsdLayout),
 #endif
     CLI_COMMAND_DEF("timer_output_mode", "get or set the outputmode for a given timer.",  "[<timer> [<AUTO|MOTORS|SERVOS>]]", cliTimerOutputMode),
+    CLI_COMMAND_DEF("debug", "debug commands.",  "", cliDebug),
 };
 
 static void cliHelp(char *cmdline)
