@@ -63,7 +63,7 @@
 #include "telemetry/msp_shared.h"
 
 
-#define CRSF_CYCLETIME_US                   100000  // 100ms, 10 Hz
+#define CRSF_CYCLETIME_US                   20000  // 20ms, 50 Hz
 #define CRSF_DEVICEINFO_VERSION             0x01
 // According to TBS: "CRSF over serial should always use a sync byte at the beginning of each frame.
 // To get better performance it's recommended to use the sync byte 0xC8 to get better performance"
@@ -453,35 +453,35 @@ static void processCrsf(void)
     sbuf_t crsfPayloadBuf;
     sbuf_t *dst = &crsfPayloadBuf;
 
-    if (currentSchedule & BV(CRSF_FRAME_ATTITUDE_INDEX)) {
+    // if (currentSchedule & BV(CRSF_FRAME_ATTITUDE_INDEX)) {
         crsfInitializeFrame(dst);
         crsfFrameAttitude(dst);
         crsfFinalize(dst);
-    }
-    if (currentSchedule & BV(CRSF_FRAME_BATTERY_SENSOR_INDEX)) {
-        crsfInitializeFrame(dst);
-        crsfFrameBatterySensor(dst);
-        crsfFinalize(dst);
-    }
-    if (currentSchedule & BV(CRSF_FRAME_FLIGHT_MODE_INDEX)) {
-        crsfInitializeFrame(dst);
-        crsfFrameFlightMode(dst);
-        crsfFinalize(dst);
-    }
-#ifdef USE_GPS
-    if (currentSchedule & BV(CRSF_FRAME_GPS_INDEX)) {
-        crsfInitializeFrame(dst);
-        crsfFrameGps(dst);
-        crsfFinalize(dst);
-    }
-#endif
-#if defined(USE_BARO) || defined(USE_GPS)
-    if (currentSchedule & BV(CRSF_FRAME_VARIO_SENSOR_INDEX)) {
-        crsfInitializeFrame(dst);
-        crsfFrameVarioSensor(dst);
-        crsfFinalize(dst);
-    }
-#endif
+    // }
+//     if (currentSchedule & BV(CRSF_FRAME_BATTERY_SENSOR_INDEX)) {
+//         crsfInitializeFrame(dst);
+//         crsfFrameBatterySensor(dst);
+//         crsfFinalize(dst);
+//     }
+//     if (currentSchedule & BV(CRSF_FRAME_FLIGHT_MODE_INDEX)) {
+//         crsfInitializeFrame(dst);
+//         crsfFrameFlightMode(dst);
+//         crsfFinalize(dst);
+//     }
+// #ifdef USE_GPS
+//     if (currentSchedule & BV(CRSF_FRAME_GPS_INDEX)) {
+//         crsfInitializeFrame(dst);
+//         crsfFrameGps(dst);
+//         crsfFinalize(dst);
+//     }
+// #endif
+// #if defined(USE_BARO) || defined(USE_GPS)
+//     if (currentSchedule & BV(CRSF_FRAME_VARIO_SENSOR_INDEX)) {
+//         crsfInitializeFrame(dst);
+//         crsfFrameVarioSensor(dst);
+//         crsfFinalize(dst);
+//     }
+// #endif
     crsfScheduleIndex = (crsfScheduleIndex + 1) % crsfScheduleCount;
 }
 
@@ -539,24 +539,24 @@ void handleCrsfTelemetry(timeUs_t currentTimeUs)
     crsfRxSendTelemetryData();
 
     // Send ad-hoc response frames as soon as possible
-#if defined(USE_MSP_OVER_TELEMETRY)
-    if (mspReplyPending) {
-        mspReplyPending = handleCrsfMspFrameBuffer(CRSF_FRAME_TX_MSP_FRAME_SIZE, &crsfSendMspResponse);
-        crsfLastCycleTime = currentTimeUs; // reset telemetry timing due to ad-hoc request
-        return;
-    }
-#endif
+// #if defined(USE_MSP_OVER_TELEMETRY)
+//     if (mspReplyPending) {
+//         mspReplyPending = handleCrsfMspFrameBuffer(CRSF_FRAME_TX_MSP_FRAME_SIZE, &crsfSendMspResponse);
+//         crsfLastCycleTime = currentTimeUs; // reset telemetry timing due to ad-hoc request
+//         return;
+//     }
+// #endif
 
-    if (deviceInfoReplyPending) {
-        sbuf_t crsfPayloadBuf;
-        sbuf_t *dst = &crsfPayloadBuf;
-        crsfInitializeFrame(dst);
-        crsfFrameDeviceInfo(dst);
-        crsfFinalize(dst);
-        deviceInfoReplyPending = false;
-        crsfLastCycleTime = currentTimeUs; // reset telemetry timing due to ad-hoc request
-        return;
-    }
+    // if (deviceInfoReplyPending) {
+    //     sbuf_t crsfPayloadBuf;
+    //     sbuf_t *dst = &crsfPayloadBuf;
+    //     crsfInitializeFrame(dst);
+    //     crsfFrameDeviceInfo(dst);
+    //     crsfFinalize(dst);
+    //     deviceInfoReplyPending = false;
+    //     crsfLastCycleTime = currentTimeUs; // reset telemetry timing due to ad-hoc request
+    //     return;
+    // }
 
     // Actual telemetry data only needs to be sent at a low frequency, ie 10Hz
     // Spread out scheduled frames evenly so each frame is sent at the same frequency.

@@ -458,7 +458,7 @@ bool calculateRxChannelsAndUpdateFailsafe(timeUs_t currentTimeUs)
     }
 
     rxDataProcessingRequired = false;
-    rxNextUpdateAtUs = currentTimeUs + DELAY_10_HZ;
+    rxNextUpdateAtUs = currentTimeUs + DELAY_50_HZ;
 
     // If RX is suspended, do not process any data
     if (isRxSuspended) {
