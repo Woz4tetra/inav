@@ -171,7 +171,7 @@ void flashLedsAndBeep(void)
 {
     LED1_ON;
     LED0_OFF;
-    for (uint8_t i = 0; i < 10; i++) {
+    for (uint8_t i = 0; i < 5; i++) {
         LED1_TOGGLE;
         LED0_TOGGLE;
         delay(25);
@@ -474,9 +474,10 @@ void init(void)
 #endif
 
 #if defined(USE_GPS) || defined(USE_MAG)
+    /*
     delay(500);
 
-    /* Extra 500ms delay prior to initialising hardware if board is cold-booting */
+    // Extra 500ms delay prior to initialising hardware if board is cold-booting
     if (!isMPUSoftReset()) {
         LED1_ON;
         LED0_OFF;
@@ -490,6 +491,7 @@ void init(void)
         LED0_OFF;
         LED1_OFF;
     }
+    */
 #endif
 
     initBoardAlignment();
