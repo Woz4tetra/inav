@@ -332,7 +332,7 @@ void gyroStartCalibration(void)
     }
 #endif
 
-    zeroCalibrationStartV(&gyroCalibration[0], CALIBRATING_GYRO_TIME_MS, CALIBRATING_GYRO_MORON_THRESHOLD, false);
+    zeroCalibrationStartV(&gyroCalibration[0], CALIBRATING_GYRO_TIME_MS, CALIBRATING_GYRO_MORON_THRESHOLD, true);
 }
 
 bool gyroIsCalibrationComplete(void)

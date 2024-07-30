@@ -95,6 +95,7 @@ STATIC_FASTRAM fpVector3_t vCorrectedMagNorth;             // Magnetic North vec
 
 FASTRAM fpQuaternion_t orientation;
 FASTRAM attitudeEulerAngles_t attitude;             // absolute angle inclination in multiple of 0.1 degree    180 deg = 1800
+FASTRAM attitudeEulerAngles_t angularVelocity;      // angular velocity in multiple of 0.1 degree/s    180 deg = 1800
 FASTRAM float rMat[3][3];
 FASTRAM bool isUpsideDown;
 
@@ -566,6 +567,10 @@ STATIC_UNIT_TESTED void imuUpdateEulerAngles(void)
 		attitude.values.roll = RADIANS_TO_DECIDEGREES(atan2_approx(rMat[2][1], rMat[2][2]));
 		attitude.values.pitch = RADIANS_TO_DECIDEGREES((0.5f * M_PIf) - acos_approx(-rMat[2][0]));
 		attitude.values.yaw = RADIANS_TO_DECIDEGREES(-atan2_approx(rMat[1][0], rMat[0][0]));
+
+        angularVelocity.values.roll = RADIANS_TO_DECIDEGREES(imuMeasuredRotationBFFiltered.x);
+        angularVelocity.values.pitch = RADIANS_TO_DECIDEGREES(imuMeasuredRotationBFFiltered.y);
+        angularVelocity.values.yaw = RADIANS_TO_DECIDEGREES(imuMeasuredRotationBFFiltered.z);
 	}
 
     if (attitude.values.yaw < 0)

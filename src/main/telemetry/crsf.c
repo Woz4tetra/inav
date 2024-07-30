@@ -304,9 +304,9 @@ static void crsfFrameAttitude(sbuf_t *dst)
 {
      sbufWriteU8(dst, CRSF_FRAME_ATTITUDE_PAYLOAD_SIZE + CRSF_FRAME_LENGTH_TYPE_CRC);
      crsfSerialize8(dst, CRSF_FRAMETYPE_ATTITUDE);
-     crsfSerialize16(dst, decidegrees2Radians10000(attitude.values.pitch));
-     crsfSerialize16(dst, decidegrees2Radians10000(attitude.values.roll));
-     crsfSerialize16(dst, decidegrees2Radians10000(attitude.values.yaw));
+     crsfSerialize16(dst, decidegrees2Radians10000(angularVelocity.values.pitch));
+     crsfSerialize16(dst, decidegrees2Radians10000(angularVelocity.values.roll));
+     crsfSerialize16(dst, decidegrees2Radians10000(angularVelocity.values.yaw));
 }
 
 /*

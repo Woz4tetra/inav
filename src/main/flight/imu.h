@@ -42,6 +42,7 @@ typedef union {
 
 extern fpQuaternion_t orientation;
 extern attitudeEulerAngles_t attitude;
+extern attitudeEulerAngles_t angularVelocity;
 extern float rMat[3][3];
 
 typedef struct imuConfig_s {
