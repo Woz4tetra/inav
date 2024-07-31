@@ -120,9 +120,9 @@ static const uint8_t beep_2shortBeeps[] = {
 static const uint8_t beep_2longerBeeps[] = {
     20, 15, 35, 5, BEEPER_COMMAND_STOP
 };
-// 3 beeps
+// 2 fast short beeps
 static const uint8_t beep_runtimeCalibrationDone[] = {
-    20, 10, 20, 10, 20, 10, BEEPER_COMMAND_STOP
+    5, 5, 5, 5, BEEPER_COMMAND_STOP
 };
 // two short beeps and a pause (first pause, then short beep)
 static const uint8_t beep_launchModeBeep[] = {
