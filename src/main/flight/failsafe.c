@@ -375,6 +375,7 @@ void failsafeUpdateState(void)
     const bool receivingRxDataAndNotFailsafeMode = failsafeIsReceivingRxData() && !IS_RC_MODE_ACTIVE(BOXFAILSAFE);
     const bool armed = ARMING_FLAG(ARMED);
     const bool sticksAreMoving = failsafeCheckStickMotion();
+    const bool batteryIsCritical = checkBatteryVoltageState() == BATTERY_CRITICAL;
     beeperMode_e beeperMode = BEEPER_SILENCE;
 
     // Beep RX lost only if we are not seeing data and we have been armed earlier
@@ -390,6 +391,11 @@ void failsafeUpdateState(void)
         switch (failsafeState.phase) {
             case FAILSAFE_IDLE:
                 if (armed) {
+                    if (batteryIsCritical) {
+                        // JustDisarm: battery is critical
+                        failsafeSetActiveProcedure(FAILSAFE_PROCEDURE_DROP_IT);
+                        failsafeActivate(FAILSAFE_LANDED);  // skip auto-landing procedure
+                    }
                     // Track throttle command below minimum time
                     if (!throttleStickIsLow()) {
                         failsafeState.throttleLowPeriod = millis() + failsafeConfig()->failsafe_throttle_low_delay * MILLIS_PER_TENTH_SECOND;
