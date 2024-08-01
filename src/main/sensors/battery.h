@@ -70,6 +70,7 @@ void batteryInit(void);
 void setBatteryProfile(uint8_t profileIndex);
 void activateBatteryProfile(void);
 void batteryDisableProfileAutoswitch(void);
+bool isBatteryCritical(void);
 
 bool isBatteryVoltageConfigured(void);
 bool isPowerSupplyImpedanceValid(void);

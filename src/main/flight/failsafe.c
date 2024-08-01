@@ -375,7 +375,7 @@ void failsafeUpdateState(void)
     const bool receivingRxDataAndNotFailsafeMode = failsafeIsReceivingRxData() && !IS_RC_MODE_ACTIVE(BOXFAILSAFE);
     const bool armed = ARMING_FLAG(ARMED);
     const bool sticksAreMoving = failsafeCheckStickMotion();
-    const bool batteryIsCritical = checkBatteryVoltageState() == BATTERY_CRITICAL;
+    const bool batteryIsCritical = isBatteryCritical();
     beeperMode_e beeperMode = BEEPER_SILENCE;
 
     // Beep RX lost only if we are not seeing data and we have been armed earlier

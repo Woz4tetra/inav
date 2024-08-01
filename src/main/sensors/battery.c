@@ -73,6 +73,7 @@
 #define AMPERAGE_LPF_FREQ  1                    // Battery current filtering cutoff
 #define IMPEDANCE_STABLE_SAMPLE_COUNT_THRESH 10 // Minimum sample count to consider calculated power supply impedance as stable
 
+#define STATE_CHANGE_DELAY 1000000              // Delay in us before considering battery state change
 
 // Battery monitoring stuff
 static uint8_t batteryCellCount;                // cell count
@@ -96,6 +97,7 @@ static int32_t mWhDrawn = 0;                    // energy (milliWatt hours) draw
 
 batteryState_e batteryState;
 const batteryProfile_t *currentBatteryProfile;
+timeUs_t lastStateChangeTime = 0;
 
 PG_REGISTER_ARRAY_WITH_RESET_FN(batteryProfile_t, MAX_BATTERY_PROFILE_COUNT, batteryProfiles, PG_BATTERY_PROFILES, 2);
 
@@ -350,6 +352,7 @@ static void checkBatteryCapacityState(void)
 
 void batteryUpdate(timeUs_t timeDelta)
 {
+    static batteryState_e lastBatteryState = BATTERY_NOT_PRESENT;
     /* battery has just been connected*/
     if (batteryState == BATTERY_NOT_PRESENT && vbat > VBATT_PRESENT_THRESHOLD) {
 
@@ -427,6 +430,13 @@ void batteryUpdate(timeUs_t timeDelta)
                 default:
                     break;
             }
+    }
+    if (lastBatteryState != batteryState) {
+        lastStateChangeTime = 0;
+        lastBatteryState = batteryState;
+    }
+    else {
+        lastStateChangeTime += timeDelta;
     }
 }
 #endif
@@ -729,4 +739,10 @@ int32_t calculateAveragePower(void) {
 // returns mWh / meter
 int32_t calculateAverageEfficiency(void) {
     return getFlyingEnergy() * 100 / getTotalTravelDistance();
+}
+
+bool isBatteryCritical(void) {
+    // Battery is considered critical if it is in critical state and has been
+    // in that state for more than 1 second
+    return batteryState == BATTERY_CRITICAL && lastStateChangeTime > STATE_CHANGE_DELAY;
 }
